@@ -15,20 +15,13 @@ const addressSchema = new mongoose.Schema({
 
 const paymentSchema = new mongoose.Schema({
     mode_of_payment:{type:String, enum:["UPI", "Credit_Card", "Debit_Card", "Cash"]},
-    Credit_Card: [{
+    card_details: {
         Card_number: {type:Number},
         CVV:{type:Number},
         Expiry:{type:String},
         Name_on_card: {type:String}
 
-    }],
-    Debit_Card: [{
-        Card_number: {type:Number},
-        CVV:{type:Number},
-        Expiry:{type:String},
-        Name_on_card: {type:String}
-
-    }]
+    }
 })
 
 const add_to_cart = new mongoose.Schema({
@@ -49,7 +42,7 @@ const userSchema = new mongoose.Schema({
     order_status:{type:String, enum:["Order Confirmed", "Dispatched", "InTransit", "Delivered"]},
     // my_orders:{type:mongoose.Schema.Types.ObjectId, ref: 'orders'},
     add_to_cart:[add_to_cart],
-    user_status:{type:String, enum:["Active"]}
+    user_status:{type:String, enum:["Active", "Inactive"]}
 
 
 

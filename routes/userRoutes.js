@@ -14,6 +14,8 @@ router.get('/home', auth, (req,res) => {
 })
 
 router.post('/add-delivery-address/:id', userController.addDeliveryAddress)
+router.post('/add-card/:id', userController.addPaymentMethod)
+
 
 
 module.exports = router

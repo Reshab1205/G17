@@ -81,10 +81,12 @@ const addDeliveryAddress = async (req,res) => {
            return res.status(402).json({message:'Delivery Address cannot be empty'})
         }
         // const checkHouseNumber = User.findOne({})
-        const findUser = User.findByIdAndUpdate(req.params.id, inputData)
-        console.log('findUser',findUser)
+        const findUserAddAddress = await User.findByIdAndUpdate(req.params.id, {
+            $push:{address: inputData}
+        })
+        console.log('findUser',findUserAddAddress)
         // const addDeliveryAddress = await User.create(inputData)
-        return res.status(200).json({ success:true, message: 'User Updated successfully'})
+        return res.status(200).json({ success:true, message: 'User Address Updated successfully', data:findUserAddAddress})
 
     } catch (err) {
         console.log(err)
@@ -94,11 +96,92 @@ const addDeliveryAddress = async (req,res) => {
 
 }
 
-const addPaymentMethod = () => {
+const addPaymentMethod = async (req,res) => {
+    try {
+        const { id } = req.params
+        const inputData = req.body;
+        if(!id) {
+            return res.status(400).json({message: "User Id is required"})
+        }
+        if(Object.keys(inputData).length === 0) {
+           return res.status(402).json({message:'Payment Details cannot be empty'})
+        }
+        const findUserAddPaymentMethod = await User.findByIdAndUpdate(req.params.id, {
+            $push:{payment: inputData}
+        })
+        console.log('findUser',findUserAddPaymentMethod)
+        return res.status(200).json({ success:true, message: 'User Payment Updated successfully', data:findUserAddPaymentMethod})
+
+    } catch (err) {
+        console.log(err)
+        return res.status(400).json({message: 'Internal Server Error'})   
+
+    }    
 
 }
 
-const removePaymentMethod = () => {
+// const addPaymentMethod = async (req,res) => {
+//     try {
+//         const { id } = req.params
+//         const inputData = req.body;
+//         if(!id) {
+//             return res.status(400).json({message: "User Id is required"})
+//         }
+//         if(Object.keys(inputData).length === 0) {
+//            return res.status(402).json({message:'Payment Details cannot be empty'})
+//         }
+//         const validPaymentModes = ["UPI", "Credit_Card", "Debit_Card", "Cash"]
+//         if(!validPaymentModes.includes(inputData.mode_of_payment)) {
+//             return res.status(400).json({message: "Invalid mode of payment"})
+//         }
+//         if(["Credit_Card", "Debit_Card"].includes(inputData.mode_of_payment)) {
+//             if(!inputData.card_details) {
+//                 return res.status(400).json({message: "Card Details are required!"})   
+//             }
+//         }
+//         const {Card_number, CVV, Expiry} = inputData.card_details
+//         const user = await User.findById(id)
+//         if(!user) {
+//             return res.status(400).json({message: "User does not exists"})
+//         }
+//         const matchCard = user.payment.find(payment => payment.card_details && payment.card_details.Card_number === Card_number)
+//         console.log(matchCard)
+//         if(matchCard) {
+//             return res.status(400).json({message: "Card Already Exists"})
+//         }
+        
+//         const findUserAddPaymentMethod = await User.findByIdAndUpdate(req.params.id, {
+//             $push:{payment: inputData}   
+//         })
+//         findUserAddPaymentMethod['payment'].push(inputData);
+//         // console.log('findUser',findUserAddPaymentMethod)
+//         return res.status(200).json({ success:true, message: 'User Payment Updated successfully', data:findUserAddPaymentMethod})
+
+//     } catch (err) {
+//         console.log(err)
+//         return res.status(400).json({message: 'Internal Server Error'})   
+
+//     }    
+
+// }
+
+const removePaymentMethod = async (req,res) => {
+    try {
+        const inputData = req.body;
+        console.log('req',req.params.id)
+        const findUser = await User.findById()
+        
+        const findPaymentTypeAndDelete = await User.findByIdAndUpdate(req.params.id, {
+            $push:{payment: inputData}
+        })
+        console.log('findUser',findPaymentTypeAndDelete)
+        return res.status(200).json({ success:true, message: 'User Payment Removed successfully', data:findPaymentTypeAndDelete})
+
+    } catch (err) {
+        console.log(err)
+        return res.status(400).json({message: 'Internal Server Error'})   
+
+    } 
 
 }
 
