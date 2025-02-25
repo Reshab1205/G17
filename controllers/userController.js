@@ -106,9 +106,31 @@ const addPaymentMethod = async (req,res) => {
         if(Object.keys(inputData).length === 0) {
            return res.status(402).json({message:'Payment Details cannot be empty'})
         }
+        const validPaymentModes = ["UPI", "Credit_Card", "Debit_Card", "Cash"]
+        console.log(typeof(validPaymentModes))
+        if(!validPaymentModes.includes(inputData.mode_of_payment)) {
+            return res.status(402).json({message:'Please Select the mode of payment'})  
+        }
+        const {Card_number,CVV,Expiry,Name_on_card} = inputData.card_details
+        if(["Credit_Card", "Debit_Card"].includes(inputData.mode_of_payment)) {
+            if(!inputData.card_details) {
+                return res.status(402).json({message:'Please enter the card details'})     
+            }
+        }
+        const user = await User.findById(id);
+        if(!user) {
+            return res.status(402).json({message:'User does not exist'})     
+        }
+        const matchCard =  user.payment.find(payment => payment.card_details.Card_number === Card_number )
+        console.log('matchCard',typeof(matchCard))
+        if(matchCard) {
+            return res.status(402).json({message:'Card already exist'})      
+        }
+
         const findUserAddPaymentMethod = await User.findByIdAndUpdate(req.params.id, {
             $push:{payment: inputData}
         })
+        findUserAddPaymentMethod['payment'].push(inputData)
         console.log('findUser',findUserAddPaymentMethod)
         return res.status(200).json({ success:true, message: 'User Payment Updated successfully', data:findUserAddPaymentMethod})
 
